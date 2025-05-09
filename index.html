@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edúcate: Cursos Gratuitos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento, aplicando la fuente Inter y el degradado de fondo */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0; /* Asegura que no haya margen superior por defecto */
+            padding-top: 64px; /* Añade padding para que el contenido no quede detrás de la barra de navegación fija */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(224, 231, 255, 0.5), rgba(196, 211, 255, 0.2)), /* Degradado de blanco a azul claro con transparencia */
+                        linear-gradient(to br, #e0f2f7, #ede7f6); /* Mantiene el degradado original como base */
+            background-attachment: fixed; /* Fija el fondo */
+            font-size: 1rem; /* Tamaño de fuente base para escritorio */
+        }
+
+        /* Estilos para la barra de navegación fija */
+        .navbar {
+            position: fixed; /* Fija la barra en la parte superior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Asegura que la barra esté por encima de otros elementos */
+        }
+
+        /* Estilos para las tarjetas de las plataformas */
+        .platform-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para hover */
+            /* Asegura que las tarjetas tengan un ancho mínimo para el desplazamiento */
+            /* Ajustado para mostrar más tarjetas (aprox 3-4) */
+            min-width: 280px; /* Ajusta este valor según prefieras */
+            max-width: 320px; /* Limita el ancho máximo para pantallas grandes */
+            width: 90%; /* Ancho responsivo */
+            /* Asegura que las tarjetas tengan una altura mínima para uniformidad */
+            min-height: 450px; /* Ajusta este valor según la cantidad de contenido */
+            display: flex; /* Usa flexbox para el contenido interno */
+            flex-direction: column; /* Apila los elementos internos verticalmente */
+        }
+        .platform-card:hover {
+            transform: translateY(-5px); /* Eleva la tarjeta al pasar el cursor */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Sombra más pronunciada */
+        }
+        /* Estilos para los botones de las plataformas */
+        .btn {
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease; /* Transición para color y transformación */
+        }
+        .btn:hover {
+            transform: translateY(-2px); /* Eleva ligeramente el botón al pasar el cursor */
+        }
+        /* Estilo para asegurar que el contenido de la tarjeta se estire y el pie de la tarjeta (botones) quede abajo */
+        .platform-card-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Asegura que la tarjeta ocupe toda la altura del contenedor flexible */
+        }
+        .platform-card-body {
+            flex-grow: 1; /* Hace que el cuerpo de la tarjeta crezca para empujar los botones hacia abajo */
+        }
+
+        /* Estilos para ocultar la barra de desplazamiento (opcional) */
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari and Opera */
+        }
+
+        /* Estilo para el nombre "Edúcate" con colores */
+        .educate-logo span {
+            font-weight: bold; /* Mantiene el estilo negrita */
+        }
+
+        /* Estilo para el título principal "Edúcate" */
+        .main-title-educate {
+            font-size: 3rem; /* Ajusta el tamaño de la fuente para escritorio */
+            line-height: 1; /* Ajusta el espaciado entre líneas */
+        }
+
+        /* Estilo para el subtítulo "Aprende sin fronteras" */
+        .main-subtitle {
+             font-size: 1.5rem; /* Ajusta el tamaño de la fuente para escritorio */
+             /* Aplica el degradado original */
+             color: transparent;
+             background-clip: text;
+             -webkit-background-clip: text; /* Para navegadores Webkit */
+             background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+        }
+
+         /* Estilo para el botón "Conoce las plataformas" */
+        .btn-gradient {
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: opacity 0.3s ease;
+            font-size: 1rem; /* Tamaño de fuente base para escritorio */
+        }
+        .btn-gradient:hover {
+            opacity: 0.9;
+        }
+
+        /* Estilo para el contenedor del video */
+        .video-container {
+            margin-top: 4rem; /* Espacio superior */
+            margin-bottom: 4rem; /* Espacio inferior */
+            display: flex;
+            justify-content: center; /* Centra el video horizontalmente */
+        }
+
+        /* Estilo para el iframe del video */
+        .video-container iframe {
+            width: 75%; /* Ocupa el 75% del ancho del contenedor */
+            aspect-ratio: 16 / 9; /* Mantiene una relación de aspecto 16:9 */
+            border-radius: 1rem; /* Bordes redondeados */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Sombra */
+        }
+
+
+        /* Media Query para dispositivos móviles (menos de 768px de ancho) */
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.8rem; /* Reduce el tamaño de fuente base */
+                padding-top: 56px; /* Ajusta el padding superior para la barra de navegación en móviles */
+            }
+
+            .navbar {
+                 padding-top: 0.5rem; /* Ajusta el padding de la barra en móviles */
+                 padding-bottom: 0.5rem;
+            }
+
+            .navbar ul {
+                 space-x: 1rem; /* Reduce el espacio entre elementos de la barra de navegación */
+            }
+
+            .navbar ul li a { /* Ajusta el tamaño del texto de la barra de navegación */
+                font-size: 0.75rem; /* Reducido en un 25% aprox */
+            }
+
+            /* Oculta el logo completo de Edúcate en móviles */
+            .educate-logo.full {
+                display: none;
+            }
+
+            /* Muestra el logo de la 'E' en móviles */
+            .educate-logo.mobile {
+                display: inline-block;
+                font-size: 1.5rem; /* Ajusta el tamaño de la 'E' */
+                font-weight: bold;
+                /* Aplica el degradado a la 'E' */
+                color: transparent;
+                background-clip: text;
+                -webkit-background-clip: text;
+                background-image: linear-gradient(to right, #1A73E8, #46BDC6, #4285F4, #5AB9EA); /* Colores del degradado original */
+            }
+
+
+            .main-title-educate {
+                font-size: 2rem; /* Reduce el tamaño del título principal */
+            }
+
+            .main-subtitle {
+                font-size: 1rem; /* Reduce el tamaño del subtítulo */
+            }
+
+            .text-lg { /* Ajusta el texto introductorio */
+                font-size: 0.15rem; /* Reducido a 0.15rem */
+            }
+
+            .platform-card {
+                min-width: 140px; /* Reducido en un 50% del tamaño original de escritorio (280 * 0.50) */
+                min-height: 250px; /* Ajusta la altura mínima de las tarjetas para móviles */
+                padding: 0.5rem; /* Reduce el padding interno de las tarjetas para compactar */
+            }
+
+            .platform-card h2 { /* Ajusta el tamaño del título de la tarjeta */
+                font-size: 1rem; /* Ajustado para que el título no sea demasiado grande */
+            }
+
+            .platform-card p { /* Ajusta el tamaño del texto de la tarjeta */
+                font-size: 0.5625rem; /* Mantenido el tamaño anterior que era legible */
+            }
+
+            .btn { /* Ajusta el padding de los botones de la tarjeta */
+                padding: 0.2rem 0.4rem;
+                font-size: 0.6rem;
+            }
+
+            .btn-gradient {
+                font-size: 0.85rem; /* Reduce el tamaño de fuente del botón principal (mantenido 25% reducción) */
+                padding: 0.6rem 1.2rem; /* Mantenido el padding del botón principal */
+            }
+
+            .video-container {
+                margin-top: 2rem; /* Reduce el margen superior del video */
+                margin-bottom: 2rem; /* Reduce el margen inferior del video */
+            }
+
+             .video-container iframe {
+                width: 100%; /* Ocupa todo el ancho en pantallas pequeñas */
+            }
+
+            .text-sm { /* Ajusta el tamaño del texto del footer */
+                font-size: 0.15rem; /* Reducido a 0.15rem */
+            }
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-100 via-indigo-50 to-purple-100 text-gray-800">
+
+    <nav class="navbar bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-xl educate-logo full md:block hidden">
+                <span style="color: #1A73E8;">E</span><span style="color: #46BDC6;">dú</span><span style="color: #4285F4;">ca</span><span style="color: #5AB9EA;">te</span>
+            </div>
+             <div class="text-xl educate-logo mobile md:hidden block">
+                 <span style="color: #1A73E8;">E</span>
+             </div>
+            <ul class="flex space-x-6">
+                <li><a href="#inicio" class="text-gray-700 hover:text-blue-600 font-semibold">Inicio</a></li>
+                <li><a href="#cursos" class="text-gray-700 hover:text-blue-600 font-semibold">Plataformas</a></li>
+                <li><a href="#acerca-de" class="text-gray-700 hover:text-blue-600 font-semibold">Acerca de</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 md:py-12 relative z-0" id="inicio"> <header class="text-center mb-10 md:mb-16">
+            <h1 class="font-bold mb-2 main-title-educate">
+                 <span class="educate-logo"><span style="color: #1A73E8;">E</span><span style="color: #46BDC6;">dú</span><span style="color: #4285F4;">ca</span><span style="color: #5AB9EA;">te</span></span>
+            </h1>
+            <p class="font-bold mb-4 main-subtitle">Aprende sin fronteras</p>
+
+            <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
+                Sabemos que no siempre es fácil acceder a la educación desde el lugar donde vives o trabajas. Pero eso no significa que no puedas seguir creciendo.<br><br>
+                Edúcate es una herramienta pensada para ti: aquí encontrarás una recopilación de cursos gratuitos, certificados y en español, junto con guías sencillas para que sepas cómo acceder a ellos paso a paso.<br><br>
+                Porque tu ubicación no debe ser un límite para aprender, capacitarte y abrirte nuevas oportunidades.<br>
+                Estudia desde donde estés. El conocimiento está al alcance de un clic.
+            </p>
+        </header>
+
+        <div class="text-center mt-8 mb-8">
+             <a href="#cursos" class="btn-gradient inline-block"> Conoce las plataformas
+             </a>
+             </div>
+
+
+        <div class="flex overflow-x-auto space-x-6 pb-4 hide-scrollbar" id="scrollContainer">
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none"> <img src="https://placehold.co/100x100/2563EB/FFFFFF?text=SENA" alt="Logo SENA" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-blue-700">SENA Sofia Plus</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        El Servicio Nacional de Aprendizaje (SENA) es la principal institución de formación técnica y tecnológica en Colombia. Ofrece una amplia variedad de cursos virtuales gratuitos en múltiples áreas del conocimiento. La inscripción a cursos complementarios suele estar abierta durante todo el año.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Busca "cursos virtuales" en su plataforma Sofia Plus y sigue el proceso de inscripción.</p>
+                </div>
+                <div class="mt-auto"> <a href="http://portal.senasofiaplus.edu.co/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar SENA Sofia Plus
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/00796B/FFFFFF?text=MinTIC" alt="Logo MinTIC" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-teal-700">MinTIC</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        El Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC) de Colombia frecuentemente ofrece programas y cursos gratuitos en habilidades digitales, programación y emprendimiento tecnológico, a menudo en alianza con otras entidades.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Revisa su sitio web oficial y las convocatorias activas para programas de formación.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.mintic.gov.co/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar MinTIC
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+             <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/EF4444/FFFFFF?text=Col+Apr" alt="Logo Colombia Aprende" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-red-600">Colombia Aprende</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Es el portal educativo del Estado colombiano. Ofrece recursos educativos digitales, contenidos para docentes, estudiantes y familias, y a veces incluye acceso a cursos o plataformas de aprendizaje gratuitas.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Explora sus secciones de recursos y noticias sobre convocatorias educativas.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.colombiaaprende.edu.co/html/micrositios/1752/w3-channel.html" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Colombia Aprende
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+             <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/4F46E5/FFFFFF?text=Biblored" alt="Logo Biblored" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-indigo-600">Biblored (Bogotá)</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        La Red Distrital de Bibliotecas Públicas de Bogotá (Biblored) ofrece acceso gratuito a recursos digitales, incluyendo cursos en línea a través de plataformas como Coursera o LinkedIn Learning, para sus afiliados. Requiere estar afiliado a la red.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Afíliate a Biblored y explora su catálogo de recursos digitales y cursos.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.biblored.gov.co/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Biblored
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+             <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/10B981/FFFFFF?text=Capacitate" alt="Logo Capacitate para el empleo" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-green-700">Capacítate para el Empleo</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Plataforma de la Fundación Carlos Slim que ofrece cursos gratuitos en diversas áreas productivas y oficios, orientados a la capacitación para el trabajo. Los cursos incluyen certificado al finalizar.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Regístrate en la plataforma y explora el catálogo de cursos disponibles.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://capacitateparaelempleo.org/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Capacítate para el Empleo
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/4A5568/FFFFFF?text=Coursera" alt="Logo Coursera" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-gray-800">Coursera</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Plataforma global que colabora con universidades y organizaciones de prestigio, incluyendo la Universidad de los Andes y la Universidad Nacional de Colombia. Ofrece cursos, especializaciones y algunos programas de grado. Muchos cursos se pueden auditar gratuitamente (acceso a materiales); los certificados suelen tener un costo.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Explora los cursos y elige la opción "Auditar" o "Curso completo, sin certificado" si está disponible para acceso gratuito.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://www.coursera.org/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Coursera
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/00796B/FFFFFF?text=edX" alt="Logo edX" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-teal-700">edX</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Otra reconocida plataforma de MOOCs (Cursos Online Masivos y Abiertos) fundada por Harvard y el MIT. Ofrece cursos de diversas universidades del mundo en español. Similar a Coursera, la auditoría de cursos es generalmente gratuita, mientras que los certificados verificados son de pago.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Busca cursos de tu interés y selecciona la opción de auditoría gratuita.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://www.edx.org/es" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar edX
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/EA4335/FFFFFF?text=Google" alt="Logo Google Actívate" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-red-600">Google Actívate / Crece con Google</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Iniciativa de Google que ofrece cursos gratuitos en competencias digitales, marketing digital, desarrollo profesional, datos, IA, y más. Algunos cursos incluyen certificación gratuita de Google.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Explora el catálogo de cursos y regístrate con tu cuenta de Google.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://grow.google/intl/es/courses-and-tools/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Google Actívate
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/283593/FFFFFF?text=Khan" alt="Logo Khan Academy" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-indigo-800">Khan Academy</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Plataforma educativa sin fines de lucro que ofrece lecciones y ejercicios prácticos en matemáticas, ciencias, programación, historia, economía y mucho más. Ideal para estudiantes de todas las edades, educadores y cualquier persona con ganas de aprender.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Explora los cursos por tema o nivel educativo. Todo el contenido es gratuito.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://es.khanacademy.org/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar Khan Academy
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/FFC107/000000?text=Udemy" alt="Logo Udemy" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-amber-600">Udemy (Cursos Gratuitos)</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Udemy es una plataforma con una vasta biblioteca de cursos. Aunque la mayoría son de pago, a menudo hay promociones y una sección de cursos completamente gratuitos en diversas áreas.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Filtra por cursos "Gratis" o busca cupones y promociones en línea.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.udemy.com/courses/free/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Ver Cursos Gratuitos en Udemy
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/0077B5/FFFFFF?text=LinkedIn" alt="Logo LinkedIn Learning" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-blue-800">LinkedIn Learning (Gratis con Biblored)</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Ofrece miles de cursos en negocios, tecnología y creatividad. El acceso completo es de suscripción, pero a través de alianzas como la de Biblored en Bogotá, puedes obtener acceso gratuito con tu afiliación.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Verifica si tu biblioteca pública local (como Biblored) ofrece acceso gratuito con tu carné.</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.linkedin.com/learning/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar LinkedIn Learning
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/9CCC65/000000?text=Platzi" alt="Logo Platzi" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-green-700">Platzi (Cursos Gratuitos)</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        Platzi es una plataforma de educación online enfocada en tecnología, diseño y negocios. Aunque es mayormente de suscripción, frecuentemente ofrecen cursos gratuitos o tienen una sección de cursos abiertos, a veces en colaboración con entidades como MinTIC.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Visita su sección de cursos gratuitos o busca anuncios de colaboraciones con entidades gubernamentales colombianas.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://platzi.com/cursos/gratis/" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Ver Cursos Gratuitos en Platzi
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+             <div class="platform-card bg-white p-6 rounded-xl shadow-lg flex-none">
+                <img src="https://placehold.co/100x100/F5A623/FFFFFF?text=CCB" alt="Logo Cámara de Comercio de Bogotá" class="w-20 h-20 mx-auto mb-4 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Logo+Alternativo'">
+                <div class="platform-card-body">
+                    <h2 class="text-2xl font-semibold mb-3 text-center text-yellow-600">Cámara de Comercio de Bogotá</h2>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                        La CCB ofrece a través de su Campus Virtual cursos gratuitos y autogestionados, especialmente enfocados en emprendimiento, transformación digital y fortalecimiento empresarial.
+                    </p>
+                    <p class="text-gray-600 mb-4 text-sm"><strong>Instrucciones:</strong> Visita su sección de "Cursos virtuales gratuitos" o "Campus Virtual".</p>
+                </div>
+                 <div class="mt-auto">
+                    <a href="https://www.ccb.org.co/formacion/iniciativas/cursos-virtuales-gratuitos" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        Visitar CCB Campus Virtual
+                    </a>
+                    <a href="youtube.com" target="_blank" rel="noopener noreferrer" class="btn block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg text-center mt-2">
+                        Guía en YouTube
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+
+        <footer class="text-center mt-10 md:mt-16 pt-8 border-t border-gray-300" id="acerca-de">
+            <p class="text-gray-600">
+                Recuerda verificar siempre los términos y condiciones de cada plataforma, ya que la disponibilidad de cursos gratuitos y las condiciones para certificación pueden cambiar.
+            </p>
+            <p class="text-sm text-gray-500 mt-2">© <span id="currentYear"></span> Edúcate.</p>
+            <p class="text-sm text-gray-500 mt-1">Recurso creado por estudiantes de ingeniería de sistemas de la Universidad Nacional Abierta y a Distancia UNAD</p>
+            <p class="text-sm text-gray-500 mt-1">¡Mucho éxito en tu aprendizaje!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Script para establecer el año actual en el pie de página
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Script para el desplazamiento horizontal automático e infinito
+        const scrollContainer = document.getElementById('scrollContainer');
+        let scrollSpeed = 0.5; // Velocidad de desplazamiento (ajusta este valor)
+        let scrollDirection = 1; // 1 para derecha, -1 para izquierda
+        const scrollIntervalDelay = 20; // Retraso entre cada paso de desplazamiento en milisegundos
+
+        function autoScroll() {
+            // Calcula el ancho total desplazable
+            const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+            // Si se desplaza a la derecha y ha llegado o superado el final
+            if (scrollDirection === 1 && scrollContainer.scrollLeft >= maxScrollLeft) {
+                // Salta al principio para crear el efecto infinito
+                scrollContainer.scrollLeft = 0;
+            }
+            // Si se desplaza a la izquierda y ha llegado o superado el principio
+            else if (scrollDirection === -1 && scrollContainer.scrollLeft <= 0) {
+                 // Para un bucle simple siempre hacia la derecha, simplemente reinicia a 0
+                 scrollContainer.scrollLeft = 0;
+            } else {
+                 // Continúa desplazándose en la dirección actual
+                 scrollContainer.scrollLeft += scrollSpeed * scrollDirection;
+            }
+        }
+
+        // Inicia el intervalo de desplazamiento automático
+        let scrollInterval = setInterval(autoScroll, scrollIntervalDelay);
+
+        // Opcional: Pausar el desplazamiento al pasar el ratón por encima
+        scrollContainer.addEventListener('mouseover', () => {
+            clearInterval(scrollInterval);
+        });
+
+        scrollContainer.addEventListener('mouseout', () => {
+            scrollInterval = setInterval(autoScroll, scrollIntervalDelay);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edúcate: Plataformas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento, aplicando la fuente Inter y el degradado de fondo */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0; /* Asegura que no haya margen superior por defecto */
+            padding-top: 64px; /* Añade padding para que el contenido no quede detrás de la barra de navegación fija */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(224, 231, 255, 0.5), rgba(196, 211, 255, 0.2)), /* Degradado de blanco a azul claro con transparencia */
+                        linear-gradient(to br, #e0f2f7, #ede7f6); /* Mantiene el degradado original como base */
+            background-attachment: fixed; /* Fija el fondo */
+            font-size: 1rem; /* Tamaño de fuente base para escritorio */
+        }
+
+        /* Estilos para la barra de navegación fija */
+        .navbar {
+            position: fixed; /* Fija la barra en la parte superior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Asegura que la barra esté por encima de otros elementos */
+        }
+
+        /* Estilo para el nombre "Edúcate" con colores */
+        .educate-logo span {
+            font-weight: bold; /* Mantiene el estilo negrita */
+        }
+
+        /* Estilo para el título de la sección */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+        }
+
+        /* Estilos para los botones de filtro */
+        .filter-container {
+            text-align: left; /* Alineado a la izquierda */
+        }
+
+        .filter-container > div {
+             margin-bottom: 1rem; /* Espacio entre grupos de filtros */
+        }
+
+        .filter-button {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #e2e8f0; /* bg-gray-200 */
+            color: #4a5568; /* text-gray-700 */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-block; /* Asegura que los botones se alineen */
+        }
+        .filter-button:hover {
+            background-color: #cbd5e0; /* bg-gray-300 */
+        }
+        .filter-button.active {
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+            color: white;
+        }
+
+        /* Estilos para la tabla */
+        .platforms-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 0.5rem;
+            overflow: hidden; /* Para que los bordes redondeados se apliquen a la tabla */
+        }
+
+        .platforms-table th,
+        .platforms-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* border-gray-200 */
+        }
+
+        .platforms-table th {
+            background-color: #f8fafc; /* bg-gray-50 */
+            font-weight: 700;
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .platforms-table tbody tr:nth-child(even) {
+            background-color: #f7fafc; /* bg-gray-50 */
+        }
+
+         .platforms-table tbody tr:hover {
+            background-color: #edf2f7; /* bg-gray-100 */
+        }
+
+        /* Estilo para el botón "Visitar" en la tabla */
+        .visit-button {
+            display: inline-block; /* Asegura que se vea como un botón */
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+            color: white !important; /* Fuerza el color blanco */
+            font-weight: 600;
+            text-decoration: none !important; /* Elimina el subrayado del enlace */
+            transition: opacity 0.3s ease;
+        }
+        .visit-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Estilos para el nombre de la plataforma clickable */
+        .platform-name-clickable {
+            cursor: pointer; /* Indica que es clickeable */
+            color: #4299e1; /* Color de enlace */
+            text-decoration: underline; /* Subrayado para indicar que es un enlace/interactivo */
+        }
+        .platform-name-clickable:hover {
+            color: #2b6cb0; /* Color más oscuro en hover */
+        }
+
+
+        /* Estilos para el Modal de Detalles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Fondo menos oscuro y más desenfoque */
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro semi-transparente menos opaco */
+            backdrop-filter: blur(8px); /* Efecto de desenfoque aumentado */
+            -webkit-backdrop-filter: blur(8px); /* Para navegadores Webkit */
+            z-index: 20; /* Por encima de todo lo demás */
+            display: none; /* Inicialmente oculto */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 85%; /* Ocupa el 85% del ancho de la página */
+            max-height: 85%; /* Limita la altura máxima */
+            overflow-y: auto; /* Añade scroll si el contenido es muy largo */
+            position: relative; /* Para posicionar la 'x' de cierre */
+        }
+
+        .modal-close-button {
+            position: absolute; /* Posicionado relativo a la tarjeta */
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568; /* text-gray-700 */
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            z-index: 21; /* Asegura que esté por encima del contenido del modal */
+        }
+        .modal-close-button:hover {
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .modal-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto; /* Centra el logo */
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .modal-info p {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+             color: #4a5568; /* text-gray-700 */
+        }
+
+        .modal-buttons-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-buttons-top {
+            margin-bottom: 1rem; /* Espacio entre secciones de botones */
+        }
+
+        .modal-buttons-bottom {
+             margin-top: 1rem; /* Espacio entre secciones de botones */
+             border-top: 1px solid #e2e8f0; /* Separador visual */
+             padding-top: 1rem;
+        }
+
+
+        .modal-buttons-container a {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Estilo para los botones generales del modal */
+         .modal-buttons-container .btn-modal-link {
+            background-color: #c3dafe; /* bg-blue-200 */
+            color: #2b6cb0; /* text-blue-800 */
+         }
+
+        /* Estilo para el botón de guía (rojo) */
+         .modal-buttons-container .btn-guide-red {
+            background-color: #ef4444; /* bg-red-500 */
+            color: white;
+         }
+
+
+        .modal-buttons-container a:hover {
+            opacity: 0.9;
+        }
+
+
+        /* Media Query para dispositivos móviles (menos de 768px de ancho) */
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.8rem; /* Reduce el tamaño de fuente base */
+                padding-top: 56px; /* Ajusta el padding superior para la barra de navegación en móviles */
+            }
+
+            .navbar {
+                 padding-top: 0.5rem; /* Ajusta el padding de la barra en móviles */
+                 padding-bottom: 0.5rem;
+            }
+
+            .navbar ul {
+                 space-x: 1rem; /* Reduce el espacio entre elementos de la barra de navegación */
+            }
+
+            .navbar ul li a { /* Ajusta el tamaño del texto de la barra de navegación */
+                font-size: 0.75rem; /* Reducido en un 25% aprox */
+            }
+
+            /* Oculta el logo completo de Edúcate en móviles */
+            .educate-logo.full {
+                display: none;
+            }
+
+            /* Muestra el logo de la 'E' en móviles */
+            .educate-logo.mobile {
+                display: inline-block;
+                font-size: 1.5rem; /* Ajusta el tamaño de la 'E' */
+                font-weight: bold;
+                /* Aplica el degradado a la 'E' */
+                color: transparent;
+                background-clip: text;
+                -webkit-background-clip: text;
+                background-image: linear-gradient(to right, #1A73E8, #46BDC6, #4285F4, #5AB9EA); /* Colores del degradado original */
+            }
+
+            .section-title {
+                font-size: 1.8rem; /* Reduce el tamaño del título de sección en móviles */
+            }
+
+            .filter-button {
+                padding: 0.3rem 0.6rem; /* Reduce el padding de los botones de filtro */
+                font-size: 0.7rem; /* Reduce el tamaño del texto de los botones de filtro */
+                margin: 0.15rem; /* Reduce el margen de los botones de filtro */
+            }
+
+            .platforms-table th,
+            .platforms-table td {
+                padding: 0.6rem; /* Reduce el padding de las celdas de la tabla */
+                font-size: 0.75rem; /* Ajusta el tamaño del texto de la tabla */
+            }
+
+            /* Ocultar algunas columnas en móviles para mejor visualización */
+            .hide-on-mobile {
+                display: none;
+            }
+
+            /* Ajustes para el Modal en móviles */
+            .modal-card {
+                width: 95%; /* Ocupa más ancho en móviles */
+                padding: 1rem; /* Reduce el padding */
+            }
+
+            .modal-close-button {
+                font-size: 1.2rem; /* Reduce el tamaño de la 'x' */
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+
+            .modal-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem; /* Reduce el tamaño del título del modal */
+            }
+
+            .modal-info p {
+                font-size: 0.7rem; /* Reduce el tamaño del texto de información */
+                margin-bottom: 0.5rem;
+            }
+
+            .modal-buttons-container a {
+                 padding: 0.5rem 1rem; /* Reduce el padding de los botones del modal */
+                 font-size: 0.7rem; /* Reduce el tamaño del texto de los botones del modal */
+                 margin: 0.25rem;
+            }
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-100 via-indigo-50 to-purple-100 text-gray-800">
+
+    <nav class="navbar bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-xl educate-logo full md:block hidden">
+                <span style="color: #1A73E8;">E</span><span style="color: #46BDC6;">dú</span><span style="color: #4285F4;">ca</span><span style="color: #5AB9EA;">te</span></div>
+             <div class="text-xl educate-logo mobile md:hidden block">
+                 <span style="color: #1A73E8;">E</span>
+             </div>
+            <ul class="flex space-x-6">
+                <li><a href="index.html#inicio" class="text-gray-700 hover:text-blue-600 font-semibold">Inicio</a></li>
+                <li><a href="plataformas.html" class="text-blue-600 font-semibold">Plataformas</a></li>
+                <li><a href="index.html#acerca-de" class="text-gray-700 hover:text-blue-600 font-semibold">Acerca de</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <h1 class="section-title">Plataformas de Cursos Gratuitos</h1>
+
+        <div class="filter-container mb-8">
+            <div class="mb-4">
+                <span class="font-semibold mr-2">Costo:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Totalmente Gratuito">Gratuito</button>
+                <button class="filter-button" data-filter="Parcialmente Gratuito">Parcialmente Gratuito</button>
+            </div>
+             <div class="mb-4">
+                <span class="font-semibold mr-2">Certifica:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Sí">Sí</button>
+                <button class="filter-button" data-filter="No">No</button>
+                <button class="filter-button" data-filter="No siempre">No siempre</button>
+                <button class="filter-button" data-filter="Sí (con costo)">Sí (con costo)</button>
+                <button class="filter-button" data-filter="Sí (mayoría con suscripción)">Sí (mayoría con suscripción)</button>
+            </div>
+             <div>
+                <span class="font-semibold mr-2">País:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Colombia">Colombia</button>
+                <button class="filter-button" data-filter="México">México</button>
+                <button class="filter-button" data-filter="Estados Unidos">Estados Unidos</button>
+                 <button class="filter-button" data-filter="Perú">Perú</button>
+            </div>
+        </div>
+
+        <p class="text-gray-700 mb-6">Haz clic en el nombre de cada plataforma para acceder a más información detallada sobre sus cursos y características.</p>
+
+
+        <div class="overflow-x-auto"> <table class="platforms-table">
+                <thead>
+                    <tr>
+                        <th>Plataforma</th>
+                        <th>Costo</th>
+                        <th>Certifica</th>
+                        <th class="hide-on-mobile">País</th> <th>Enlace</th>
+                    </tr>
+                </thead>
+                <tbody id="platformsTableBody">
+                     <tr data-platform-id="sena" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">SENA Sofia Plus</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://oferta.senasofiaplus.edu.co/sofia-oferta/" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="mintic" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">MinTIC</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.mintic.gov.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="colombiaaprende" data-cost="Totalmente Gratuito" data-certifies="No siempre" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Colombia Aprende</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>No siempre</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.colombiaaprende.edu.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                     <tr data-platform-id="carlos-slim" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="México">
+                        <td><span class="platform-name-clickable">Fundación Carlos Slim (Capacítate para el empleo)</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">México</td>
+                        <td><a href="https://capacitateparaelempleo.org" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="coursera" data-cost="Parcialmente Gratuito" data-certifies="Sí (con costo)" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">Coursera</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (con costo)</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.coursera.org" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="edx" data-cost="Parcialmente Gratuito" data-certifies="Sí (con costo)" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">edX</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (con costo)</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.edx.org/es" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="google-activate" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">Google Actívate</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://grow.google/intl/es/courses-and-tools/" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="crehana" data-cost="Parcialmente Gratuito" data-certifies="Sí (mayoría con suscripción)" data-country="Perú">
+                        <td><span class="platform-name-clickable">Crehana</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (mayoría con suscripción)</td>
+                        <td class="hide-on-mobile">Perú</td>
+                        <td><a href="https://www.crehana.com" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="platzi" data-cost="Parcialmente Gratuito" data-certifies="Sí (en su mayoría con suscripción)" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Platzi</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (en su mayoría con suscripción)</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://platzi.com" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                     <tr data-platform-id="linkedin-learning" data-cost="Parcialmente Gratuito" data-certifies="Sí" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">LinkedIn Learning</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.linkedin.com/learning/" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="ccb" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Cámara de Comercio de Bogotá</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.ccb.org.co/formacion" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <footer class="text-center mt-10 md:mt-16 pt-8 border-t border-gray-300" id="acerca-de">
+            <p class="text-gray-600">
+                Recuerda verificar siempre los términos y condiciones de cada plataforma, ya que la disponibilidad de cursos gratuitos y las condiciones para certificación pueden cambiar.
+            </p>
+            <p class="text-sm text-gray-500 mt-2">© <span id="currentYear"></span> Edúcate.</p>
+            <p class="text-sm text-gray-500 mt-1">Recurso creado por estudiantes de ingeniería de sistemas de la Universidad Nacional Abierta y a Distancia UNAD</p>
+            <p class="text-sm text-gray-500 mt-1">¡Mucho éxito en tu aprendizaje!</p>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="platformModalOverlay">
+        <div class="modal-card">
+            <span class="modal-close-button" id="modalCloseButton">×</span>
+            <img src="" alt="Logo de Plataforma" class="modal-logo" id="modalLogo" onerror="this.src='https://placehold.co/80x80/CCCCCC/FFFFFF?text=Logo'">
+            <h2 class="modal-title" id="modalTitle">Nombre de Plataforma</h2>
+            <div class="modal-info">
+                <p><strong>Tipo de cursos:</strong> <span id="modalCourseTypes"></span></p>
+                <p><strong>Dirigido a:</strong> <span id="modalAudience"></span></p>
+                <p><strong>Proceso de ingreso:</strong> <span id="modalEnrollmentProcess"></span></p>
+                <p><strong>Certifica:</strong> <span id="modalCertifies"></span></p>
+                <p><strong>Perfil del estudiante:</strong> <span id="modalStudentProfile"></span></p>
+            </div>
+            <div class="modal-buttons-container" id="modalButtonsContainer">
+                 <div id="modalButtonsTop" class="modal-buttons-top">
+                     </div>
+                 <div id="modalButtonsBottom" class="modal-buttons-bottom">
+                     </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Script para establecer el año actual en el pie de página
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // --- URL del Google Sheet para datos de botones ---
+        const buttonDataUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQiLlaFxrYfNa1XC5JC-zSEkEgCPUWSyWy4swuiKgm_lsfM2DsnR2gu9ym62RiUj75iwds9RiSOrwC/pub?gid=0&single=true&output=csv';
+
+        // --- Script para el filtrado de la tabla (opera sobre filas hardcodeadas) ---
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const platformsTableBody = document.getElementById('platformsTableBody');
+        let tableRows = platformsTableBody.querySelectorAll('tr'); // Filas hardcodeadas
+
+
+        // Función para aplicar los filtros a las filas de la tabla
+        function applyFilters() {
+             const activeFilters = {};
+             document.querySelectorAll('.filter-container .active:not([data-filter="all"])').forEach(activeButton => {
+                 const type = activeButton.parentElement.querySelector('span').textContent.split(':')[0].trim();
+                 if (!activeFilters[type]) {
+                     activeFilters[type] = [];
+                 }
+                 activeFilters[type].push(activeButton.getAttribute('data-filter'));
+             });
+
+             tableRows.forEach(row => {
+                 let showRow = true;
+
+                 // Aplicar filtros de Costo
+                 if (activeFilters['Costo'] && activeFilters['Costo'].length > 0) {
+                     const rowCost = row.getAttribute('data-cost');
+                     if (!activeFilters['Costo'].includes(rowCost)) {
+                         showRow = false;
+                     }
+                 }
+
+                 // Aplicar filtros de Certifica
+                 if (showRow && activeFilters['Certifica'] && activeFilters['Certifica'].length > 0) {
+                      const rowCertifies = row.getAttribute('data-certifies');
+                      let certifiesMatch = false;
+                      for (const filterValue of activeFilters['Certifica']) {
+                          if (rowCertifies.includes(filterValue)) {
+                              certifiesMatch = true;
+                              break;
+                          }
+                      }
+                      if (!certifiesMatch) {
+                          showRow = false;
+                      }
+                 }
+
+                 // Aplicar filtros de País
+                 if (showRow && activeFilters['País'] && activeFilters['País'].length > 0) {
+                     const rowCountry = row.getAttribute('data-country');
+                     if (!activeFilters['País'].includes(rowCountry)) {
+                         showRow = false;
+                     }
+                 }
+
+                 row.style.display = showRow ? '' : 'none';
+             });
+        }
+
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remover clase 'active' de todos los botones del mismo tipo
+                const filterType = button.parentElement.querySelector('span').textContent.split(':')[0].trim();
+                 const buttonsOfType = button.parentElement.querySelectorAll('.filter-button');
+                 buttonsOfType.forEach(btn => btn.classList.remove('active'));
+
+                // Añadir clase 'active' al botón clickeado
+                button.classList.add('active');
+
+                // Aplicar filtros
+                applyFilters();
+            });
+        });
+
+         // Inicializar filtros al cargar la página (mostrar todos por defecto)
+         document.addEventListener('DOMContentLoaded', () => {
+             document.querySelectorAll('.filter-button[data-filter="all"]').forEach(button => {
+                 button.classList.add('active');
+             });
+              // Aplicar filtros iniciales a las filas hardcodeadas
+             applyFilters();
+         });
+
+
+        // --- Script para el Modal de Detalles de Plataforma ---
+
+        // Datos detallados de las plataformas (usando IDs que coinciden con data-platform-id en las filas)
+        // Esta información NO está en los CSVs proporcionados y se mantiene aquí.
+        const platformDetails = {
+            sena: {
+                logo: 'https://placehold.co/80x80/2563EB/FFFFFF?text=SENA',
+                name: 'SENA Sofia Plus', // Debe coincidir con el encabezado en el CSV de botones
+                courseTypes: 'Formación técnica, tecnológica, complementaria y virtual en diversas áreas (industria, agro, servicios, etc.).',
+                audience: 'Ciudadanos colombianos y extranjeros con permiso de estudio, interesados en formación para el trabajo.',
+                enrollmentProcess: 'Registro en la plataforma Sofia Plus, selección del programa, inscripción según cronograma (para programas titulados) o disponibilidad (complementarios).',
+                certifies: 'Sí',
+                studentProfile: 'Personas con ganas de aprender un oficio o mejorar sus habilidades para el mercado laboral.',
+            },
+            mintic: {
+                 logo: 'https://placehold.co/80x80/00796B/FFFFFF?text=MinTIC',
+                 name: 'MinTIC', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Habilidades digitales, programación, desarrollo de software, emprendimiento tecnológico, uso de TIC.',
+                 audience: 'Ciudadanos colombianos interesados en el sector de tecnologías de la información y comunicación.',
+                 enrollmentProcess: 'Registro en convocatorias específicas publicadas en su sitio web o en alianza con otras entidades.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas interesadas en adquirir o fortalecer competencias digitales y tecnológicas.',
+            },
+            colombiaaprende: {
+                 logo: 'https://placehold.co/80x80/EF4444/FFFFFF?text=Col+Apr',
+                 name: 'Colombia Aprende', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Recursos educativos digitales, contenidos curriculares, herramientas para el aprendizaje en diversas áreas del conocimiento.',
+                 audience: 'Estudiantes, docentes, padres de familia y comunidad educativa en general.',
+                 enrollmentProcess: 'Acceso libre a la mayoría de recursos. Algunos programas o cursos específicos pueden requerir registro.',
+                 certifies: 'No siempre',
+                 studentProfile: 'Cualquier persona buscando recursos educativos para complementar su aprendizaje o enseñanza.',
+            },
+            // Biblored Eliminado
+             'carlos-slim': {
+                 logo: 'https://placehold.co/80x80/10B981/FFFFFF?text=Capacitate',
+                 name: 'Fundación Carlos Slim (Capacítate para el empleo)', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Cursos técnicos y de oficios para el trabajo (construcción, servicios, tecnología, agropecuario, etc.).',
+                 audience: 'Público en general interesado en capacitarse para el empleo o el autoempleo.',
+                 enrollmentProcess: 'Registro gratuito en la plataforma Capacítate para el Empleo y acceso a los cursos.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas buscando adquirir habilidades prácticas y certificables para ingresar o mejorar en el mercado laboral.',
+            },
+            coursera: {
+                 logo: 'https://placehold.co/80x80/4A5568/FFFFFF?text=Coursera',
+                 name: 'Coursera', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Cursos, especializaciones, certificados profesionales y grados de universidades y empresas líderes a nivel mundial, en diversas áreas.',
+                 audience: 'Estudiantes, profesionales y cualquier persona interesada en educación de alto nivel.',
+                 enrollmentProcess: 'Registro en la plataforma. Muchos cursos permiten "Auditar" gratis (acceso a materiales). La certificación y acceso completo requieren pago.',
+                 certifies: 'Sí (con costo)',
+                 studentProfile: 'Personas buscando profundizar conocimientos académicos o profesionales, a menudo con interés en obtener certificados reconocidos.',
+            },
+             edx: {
+                 logo: 'https://placehold.co/80x80/00796B/FFFFFF?text=edX',
+                 name: 'edX', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Cursos, programas de certificado y MicroMasters de universidades reconocidas globalmente, en diversas disciplinas.',
+                 audience: 'Estudiantes y aprendices de todo el mundo interesados en educación de calidad.',
+                 enrollmentProcess: 'Registro en la plataforma. La mayoría de cursos se pueden "Auditar" gratis. Los certificados verificados requieren pago.',
+                 certifies: 'Sí (con costo)',
+                 studentProfile: 'Personas buscando acceso a cursos universitarios en línea, a menudo con un enfoque académico o profesional.',
+            },
+            'google-activate': {
+                 logo: 'https://placehold.co/80x80/EA4335/FFFFFF?text=Google',
+                 name: 'Google Actívate', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Marketing digital, desarrollo profesional, datos, IA, comercio electrónico, productividad.',
+                 audience: 'Emprendedores, pequeñas empresas, estudiantes y cualquier persona interesada en habilidades digitales.',
+                 enrollmentProcess: 'Registro gratuito con cuenta de Google.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas buscando adquirir habilidades prácticas y certificables en el ámbito digital para mejorar su perfil profesional o negocio.',
+            },
+             crehana: {
+                 logo: 'https://placehold.co/80x80/F5A623/FFFFFF?text=Crehana',
+                 name: 'Crehana', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Cursos en diseño, animación, ilustración, marketing, negocios, web, fotografía, etc.',
+                 audience: 'Creativos, profesionales y estudiantes interesados en habilidades digitales y creativas.',
+                 enrollmentProcess: 'Registro en la plataforma. Ofrecen algunos cursos gratuitos y acceso completo con suscripción.',
+                 certifies: 'Sí (mayoría con suscripción)',
+                 studentProfile: 'Personas buscando desarrollar habilidades creativas y digitales para su carrera profesional.',
+            },
+            platzi: {
+                 logo: 'https://placehold.co/80x80/9CCC65/000000?text=Platzi',
+                 name: 'Platzi', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Tecnología, diseño, marketing, negocios, habilidades blandas, inglés.',
+                 audience: 'Personas interesadas en tecnología y crecimiento profesional continuo.',
+                 enrollmentProcess: 'Registro en la plataforma. Ofrecen algunos cursos gratuitos y acceso a toda la escuela con suscripción.',
+                 certifies: 'Sí (en su mayoría con suscripción)',
+                 studentProfile: 'Personas buscando aprender las últimas tendencias en tecnología y negocios para acelerar su carrera.',
+            },
+             'linkedin-learning': {
+                 logo: 'https://placehold.co/80x80/0077B5/FFFFFF?text=LinkedIn',
+                 name: 'LinkedIn Learning', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Negocios, tecnología, creatividad (software, habilidades de liderazgo, etc.).',
+                 audience: 'Profesionales buscando mejorar sus habilidades laborales y de carrera.',
+                 enrollmentProcess: 'Requiere suscripción a LinkedIn Premium o acceso a través de una institución (como Biblored). Ofrecen un mes de prueba gratis.',
+                 certifies: 'Sí',
+                 studentProfile: 'Profesionales activos o buscando empleo que desean adquirir nuevas habilidades relevantes para su campo.',
+            },
+            ccb: {
+                 logo: 'https://placehold.co/80x80/F5A623/FFFFFF?text=CCB',
+                 name: 'Cámara de Comercio de Bogotá', // Debe coincidir con el encabezado en el CSV de botones
+                 courseTypes: 'Emprendimiento, formalización empresarial, transformación digital, finanzas, marketing, gestión.',
+                 audience: 'Emprendedores, empresarios y público en general interesado en crear o fortalecer negocios en Bogotá y Cundinamarca.',
+                 enrollmentProcess: 'Registro en su Campus Virtual o inscripción a programas específicos. Muchos cursos son gratuitos.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas interesadas en el mundo empresarial, buscando herramientas y conocimientos para emprender o mejorar su negocio.',
+            }
+            // TODO: Añadir más plataformas y sus detalles aquí si no están en el CSV de botones
+        };
+
+
+        const modalOverlay = document.getElementById('platformModalOverlay');
+        const modalCard = modalOverlay.querySelector('.modal-card');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+
+        const modalLogo = document.getElementById('modalLogo');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCourseTypes = document.getElementById('modalCourseTypes');
+        const modalAudience = document.getElementById('modalAudience');
+        const modalEnrollmentProcess = document.getElementById('modalEnrollmentProcess');
+        const modalCertifies = document.getElementById('modalCertifies');
+        const modalStudentProfile = document.getElementById('modalStudentProfile');
+        const modalButtonsTop = document.getElementById('modalButtonsTop'); // Contenedor de botones superiores
+        const modalButtonsBottom = document.getElementById('modalButtonsBottom'); // Contenedor de botones inferiores
+
+
+        let loadedButtonData = []; // Para almacenar los datos del CSV de botones
+        let buttonDataHeader = []; // Para almacenar la fila de encabezado del CSV de botones
+
+
+        // Función para parsear CSV
+        function parseCSV(text) {
+             const rows = text.trim().split('\n').map(row => {
+                  const cols = [];
+                  let currentCol = '';
+                  let inQuotes = false;
+                  for (let i = 0; i < row.length; i++) {
+                      const char = row[i];
+                      if (char === '"') {
+                          inQuotes = !inQuotes;
+                      } else if (char === ',' && !inQuotes) {
+                          cols.push(currentCol.trim());
+                          currentCol = '';
+                      } else {
+                          currentCol += char;
+                      }
+                  }
+                  cols.push(currentCol.trim());
+                  return cols;
+             });
+             return rows;
+        }
+
+
+        // Función para cargar datos desde una URL
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                return parseCSV(text);
+            } catch (error) {
+                console.error(`Error al cargar datos desde ${url}:`, error);
+                return null; // Retornar null en caso de error
+            }
+        }
+
+        // Función para mostrar el modal con los detalles de la plataforma
+        function showPlatformModal(platformId) {
+            const details = platformDetails[platformId];
+
+            if (details) {
+                modalLogo.src = details.logo || 'https://placehold.co/80x80/CCCCCC/FFFFFF?text=Logo';
+                modalTitle.textContent = details.name;
+                modalCourseTypes.textContent = details.courseTypes || 'Información no disponible';
+                modalAudience.textContent = details.audience || 'Información no disponible';
+                modalEnrollmentProcess.textContent = details.enrollmentProcess || 'Información no disponible';
+                modalCertifies.textContent = details.certifies || 'Información no disponible';
+                modalStudentProfile.textContent = details.studentProfile || 'Información no disponible';
+
+                modalButtonsTop.innerHTML = ''; // Limpiar botones superiores
+                modalButtonsBottom.innerHTML = ''; // Limpiar botones inferiores
+
+
+                // Buscar la columna de la plataforma en el encabezado del CSV de botones
+                const platformColumnIndex = buttonDataHeader.indexOf(details.name);
+
+                if (platformColumnIndex !== -1) {
+                    let buttonCount = 0; // Contador para saber cuántos botones hemos añadido
+
+                    // Iterar sobre las filas de datos del CSV de botones
+                    loadedButtonData.forEach(rowData => {
+                        // La primera columna (índice 0) es el tipo de botón (ej: boton_guia)
+                        const buttonType = rowData[0];
+                        // La celda correspondiente a la plataforma actual en esta fila
+                        const buttonCellContent = rowData[platformColumnIndex];
+
+                        // Si la celda no está vacía y contiene ';'
+                        if (buttonCellContent && buttonCellContent.includes(';')) {
+                            const [buttonText, buttonLink] = buttonCellContent.split(';');
+
+                            if (buttonText && buttonLink) {
+                                const button = document.createElement('a');
+                                button.href = buttonLink.trim();
+                                button.target = '_blank';
+                                button.rel = 'noopener noreferrer';
+                                button.textContent = buttonText.trim();
+                                button.classList.add('modal-buttons-container'); // Clase base para estilos de botones en modal
+
+                                // Aplicar estilo rojo si es un botón de guía
+                                if (buttonType === 'boton_guia') {
+                                    button.classList.add('btn-guide-red');
+                                } else {
+                                     // Estilo por defecto para otros botones
+                                     button.classList.add('btn-modal-link');
+                                }
+
+                                // Añadir el botón al contenedor superior o inferior
+                                if (buttonCount < 2) { // Los primeros 2 botones van arriba
+                                    modalButtonsTop.appendChild(button);
+                                } else { // Los botones subsiguientes van abajo
+                                    modalButtonsBottom.appendChild(button);
+                                }
+
+                                buttonCount++; // Incrementar el contador de botones
+                            }
+                        }
+                    });
+
+                     // Ocultar el contenedor inferior si no se añadieron botones en él
+                     if (buttonCount <= 2) {
+                         modalButtonsBottom.style.display = 'none';
+                     } else {
+                          modalButtonsBottom.style.display = 'block'; // Asegurarse de que esté visible si hay botones
+                     }
+
+                } else {
+                    console.warn(`Plataforma "${details.name}" no encontrada en el encabezado del CSV de botones.`);
+                     // Opcional: mostrar un mensaje en el modal si no se encuentran botones
+                     modalButtonsTop.innerHTML = '<p class="text-gray-500">Botones no disponibles para esta plataforma.</p>';
+                     modalButtonsBottom.style.display = 'none'; // Ocultar el contenedor inferior
+                }
+
+
+                // Mostrar el modal
+                modalOverlay.style.display = 'flex';
+            }
+        }
+
+
+        // Ocultar modal al hacer clic en la 'x' o fuera del modal
+        modalCloseButton.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
+
+         modalOverlay.addEventListener('click', (event) => {
+             if (event.target === modalOverlay) {
+                 modalOverlay.style.display = 'none';
+             }
+         });
+
+         modalCard.addEventListener('click', (event) => {
+             event.stopPropagation();
+         });
+
+         // Añadir event listeners a los nombres de plataforma clickeables después de que el DOM esté cargado
+         document.addEventListener('DOMContentLoaded', async () => {
+             // Inicializar filtros 'Todos'
+             document.querySelectorAll('.filter-button[data-filter="all"]').forEach(button => {
+                 button.classList.add('active');
+             });
+             // Aplicar filtros iniciales a las filas hardcodeadas
+             applyFilters();
+
+             // Cargar datos de botones desde el Google Sheet
+             const rawButtonData = await fetchData(buttonDataUrl);
+             if (rawButtonData && rawButtonData.length > 0) {
+                 buttonDataHeader = rawButtonData[0]; // La primera fila es el encabezado
+                 loadedButtonData = rawButtonData.slice(1); // El resto son datos
+                 console.log("Datos de botones cargados:", loadedButtonData); // Para depuración
+             } else {
+                 console.error("No se pudieron cargar los datos de botones o el archivo está vacío.");
+                  // Opcional: mostrar un mensaje al usuario si los datos de botones no cargan
+             }
+
+
+             // Añadir listeners a los nombres de plataforma clickeables
+             const platformNameClickables = platformsTableBody.querySelectorAll('.platform-name-clickable');
+             platformNameClickables.forEach(nameElement => {
+                 nameElement.addEventListener('click', () => {
+                     const row = nameElement.closest('tr');
+                     const platformId = row.getAttribute('data-platform-id');
+                     if (platformId) { // Solo mostrar si hay un ID válido
+                         showPlatformModal(platformId);
+                     }
+                 });
+             });
+         });
+
+
+    </script>
+</body>
+</html>
