@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edúcate: Plataformas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para el cuerpo del documento, aplicando la fuente Inter y el degradado de fondo */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0; /* Asegura que no haya margen superior por defecto */
+            padding-top: 64px; /* Añade padding para que el contenido no quede detrás de la barra de navegación fija */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(224, 231, 255, 0.5), rgba(196, 211, 255, 0.2)), /* Degradado de blanco a azul claro con transparencia */
+                        linear-gradient(to br, #e0f2f7, #ede7f6); /* Mantiene el degradado original como base */
+            background-attachment: fixed; /* Fija el fondo */
+            font-size: 1rem; /* Tamaño de fuente base para escritorio */
+        }
+
+        /* Estilos para la barra de navegación fija */
+        .navbar {
+            position: fixed; /* Fija la barra en la parte superior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Asegura que la barra esté por encima de otros elementos */
+        }
+
+        /* Estilo para el nombre "Edúcate" con colores */
+        .educate-logo span {
+            font-weight: bold; /* Mantiene el estilo negrita */
+        }
+
+        /* Estilo para el título de la sección */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+        }
+
+        /* Estilos para los botones de filtro */
+        .filter-container {
+            text-align: left; /* Alineado a la izquierda */
+        }
+
+        .filter-container > div {
+             margin-bottom: 1rem; /* Espacio entre grupos de filtros */
+        }
+
+        .filter-button {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #e2e8f0; /* bg-gray-200 */
+            color: #4a5568; /* text-gray-700 */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-block; /* Asegura que los botones se alineen */
+        }
+        .filter-button:hover {
+            background-color: #cbd5e0; /* bg-gray-300 */
+        }
+        .filter-button.active {
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+            color: white;
+        }
+
+        /* Estilos para la tabla */
+        .platforms-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 0.5rem;
+            overflow: hidden; /* Para que los bordes redondeados se apliquen a la tabla */
+        }
+
+        .platforms-table th,
+        .platforms-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* border-gray-200 */
+        }
+
+        .platforms-table th {
+            background-color: #f8fafc; /* bg-gray-50 */
+            font-weight: 700;
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .platforms-table tbody tr:nth-child(even) {
+            background-color: #f7fafc; /* bg-gray-50 */
+        }
+
+         .platforms-table tbody tr:hover {
+            background-color: #edf2f7; /* bg-gray-100 */
+        }
+
+        /* Estilo para el botón "Visitar" en la tabla */
+        .visit-button {
+            display: inline-block; /* Asegura que se vea como un botón */
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Colores del degradado original */
+            color: white !important; /* Fuerza el color blanco */
+            font-weight: 600;
+            text-decoration: none !important; /* Elimina el subrayado del enlace */
+            transition: opacity 0.3s ease;
+        }
+        .visit-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Estilos para el nombre de la plataforma clickable */
+        .platform-name-clickable {
+            cursor: pointer; /* Indica que es clickeable */
+            color: #4299e1; /* Color de enlace */
+            text-decoration: underline; /* Subrayado para indicar que es un enlace/interactivo */
+        }
+        .platform-name-clickable:hover {
+            color: #2b6cb0; /* Color más oscuro en hover */
+        }
+
+
+        /* Estilos para el Modal de Detalles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Fondo menos oscuro y más desenfoque */
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro semi-transparente menos opaco */
+            backdrop-filter: blur(8px); /* Efecto de desenfoque aumentado */
+            -webkit-backdrop-filter: blur(8px); /* Para navegadores Webkit */
+            z-index: 20; /* Por encima de todo lo demás */
+            display: none; /* Inicialmente oculto */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 85%; /* Ocupa el 85% del ancho de la página */
+            max-height: 85%; /* Limita la altura máxima */
+            overflow-y: auto; /* Añade scroll si el contenido es muy largo */
+            position: relative; /* Para posicionar la 'x' de cierre */
+        }
+
+        .modal-close-button {
+            position: absolute; /* Posicionado relativo a la tarjeta */
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568; /* text-gray-700 */
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            z-index: 21; /* Asegura que esté por encima del contenido del modal */
+        }
+        .modal-close-button:hover {
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .modal-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto; /* Centra el logo */
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2d3748; /* text-gray-800 */
+        }
+
+        .modal-info p {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+             color: #4a5568; /* text-gray-700 */
+        }
+
+        .modal-buttons {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-buttons a {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-buttons .btn-site {
+            background-image: linear-gradient(to right, #2563EB, #4F46E5, #9333EA); /* Degradado */
+            color: white;
+        }
+
+         .modal-buttons .btn-guide {
+            background-color: #e2e8f0; /* bg-gray-200 */
+            color: #4a5568; /* text-gray-700 */
+        }
+
+        .modal-buttons a:hover {
+            opacity: 0.9;
+        }
+
+
+        /* Media Query para dispositivos móviles (menos de 768px de ancho) */
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.8rem; /* Reduce el tamaño de fuente base */
+                padding-top: 56px; /* Ajusta el padding superior para la barra de navegación en móviles */
+            }
+
+            .navbar {
+                 padding-top: 0.5rem; /* Ajusta el padding de la barra en móviles */
+                 padding-bottom: 0.5rem;
+            }
+
+            .navbar ul {
+                 space-x: 1rem; /* Reduce el espacio entre elementos de la barra de navegación */
+            }
+
+            .navbar ul li a { /* Ajusta el tamaño del texto de la barra de navegación */
+                font-size: 0.75rem; /* Reducido en un 25% aprox */
+            }
+
+            /* Oculta el logo completo de Edúcate en móviles */
+            .educate-logo.full {
+                display: none;
+            }
+
+            /* Muestra el logo de la 'E' en móviles */
+            .educate-logo.mobile {
+                display: inline-block;
+                font-size: 1.5rem; /* Ajusta el tamaño de la 'E' */
+                font-weight: bold;
+                /* Aplica el degradado a la 'E' */
+                color: transparent;
+                background-clip: text;
+                -webkit-background-clip: text;
+                background-image: linear-gradient(to right, #1A73E8, #46BDC6, #4285F4, #5AB9EA); /* Colores del degradado original */
+            }
+
+            .section-title {
+                font-size: 1.8rem; /* Reduce el tamaño del título de sección en móviles */
+            }
+
+            .filter-button {
+                padding: 0.3rem 0.6rem; /* Reduce el padding de los botones de filtro */
+                font-size: 0.7rem; /* Reduce el tamaño del texto de los botones de filtro */
+                margin: 0.15rem; /* Reduce el margen de los botones de filtro */
+            }
+
+            .platforms-table th,
+            .platforms-table td {
+                padding: 0.6rem; /* Reduce el padding de las celdas de la tabla */
+                font-size: 0.75rem; /* Ajusta el tamaño del texto de la tabla */
+            }
+
+            /* Ocultar algunas columnas en móviles para mejor visualización */
+            .hide-on-mobile {
+                display: none;
+            }
+
+            /* Ajustes para el Modal en móviles */
+            .modal-card {
+                width: 95%; /* Ocupa más ancho en móviles */
+                padding: 1rem; /* Reduce el padding */
+            }
+
+            .modal-close-button {
+                font-size: 1.2rem; /* Reduce el tamaño de la 'x' */
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+
+            .modal-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem; /* Reduce el tamaño del título del modal */
+            }
+
+            .modal-info p {
+                font-size: 0.7rem; /* Reduce el tamaño del texto de información */
+                margin-bottom: 0.5rem;
+            }
+
+            .modal-buttons a {
+                 padding: 0.5rem 1rem; /* Reduce el padding de los botones del modal */
+                 font-size: 0.7rem; /* Reduce el tamaño del texto de los botones del modal */
+                 margin: 0.25rem;
+            }
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-100 via-indigo-50 to-purple-100 text-gray-800">
+
+    <nav class="navbar bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-xl educate-logo full md:block hidden">
+                <span style="color: #1A73E8;">E</span><span style="color: #46BDC6;">dú</span><span style="color: #4285F4;">ca</span><span style="color: #5AB9EA;">te</span>
+            </div>
+             <div class="text-xl educate-logo mobile md:hidden block">
+                 <span style="color: #1A73E8;">E</span>
+             </div>
+            <ul class="flex space-x-6">
+                <li><a href="index.html#inicio" class="text-gray-700 hover:text-blue-600 font-semibold">Inicio</a></li> <li><a href="plataformas.html" class="text-blue-600 font-semibold">Plataformas</a></li> <li><a href="index.html#acerca-de" class="text-gray-700 hover:text-blue-600 font-semibold">Acerca de</a></li> </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <h1 class="section-title">Plataformas de Cursos Gratuitos</h1>
+
+        <div class="filter-container mb-8">
+            <div class="mb-4">
+                <span class="font-semibold mr-2">Costo:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Totalmente Gratuito">Gratuito</button>
+                <button class="filter-button" data-filter="Parcialmente Gratuito">Parcialmente Gratuito</button>
+            </div>
+             <div class="mb-4">
+                <span class="font-semibold mr-2">Certifica:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Sí">Sí</button>
+                <button class="filter-button" data-filter="No">No</button>
+                <button class="filter-button" data-filter="No siempre">No siempre</button>
+                <button class="filter-button" data-filter="Sí (con costo)">Sí (con costo)</button>
+                <button class="filter-button" data-filter="Sí (mayoría con suscripción)">Sí (con suscripción)</button>
+            </div>
+             <div>
+                <span class="font-semibold mr-2">País:</span>
+                <button class="filter-button active" data-filter="all">Todos</button>
+                <button class="filter-button" data-filter="Colombia">Colombia</button>
+                <button class="filter-button" data-filter="México">México</button>
+                <button class="filter-button" data-filter="Estados Unidos">Estados Unidos</button>
+                 <button class="filter-button" data-filter="Perú">Perú</button>
+            </div>
+        </div>
+
+        <p class="text-gray-700 mb-6">Haz clic en el nombre de cada plataforma para acceder a más información detallada sobre sus cursos y características.</p>
+
+
+        <div class="overflow-x-auto"> <table class="platforms-table">
+                <thead>
+                    <tr>
+                        <th>Plataforma</th>
+                        <th>Costo</th>
+                        <th>Certifica</th>
+                        <th class="hide-on-mobile">País</th> <th>Enlace</th>
+                    </tr>
+                </thead>
+                <tbody id="platformsTableBody">
+                    <tr data-platform-id="sena" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">SENA Sofia Plus</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://oferta.senasofiaplus.edu.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="mintic" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">MinTIC</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.mintic.gov.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="colombiaaprende" data-cost="Totalmente Gratuito" data-certifies="No siempre" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Colombia Aprende</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>No siempre</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.colombiaaprende.edu.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                     <tr data-platform-id="biblored" data-cost="Totalmente Gratuito" data-certifies="No" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Biblored</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>No</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.biblored.gov.co" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                     <tr data-platform-id="carlos-slim" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="México">
+                        <td><span class="platform-name-clickable">Fundación Carlos Slim (Capacítate para el empleo)</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">México</td>
+                        <td><a href="https://capacitateparaelempleo.org" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="coursera" data-cost="Parcialmente Gratuito" data-certifies="Sí (con costo)" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">Coursera</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (con costo)</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.coursera.org" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="edx" data-cost="Parcialmente Gratuito" data-certifies="Sí (con costo)" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">edX</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (con costo)</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.edx.org/es" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="google-activate" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">Google Actívate</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://activate.google.com" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="crehana" data-cost="Parcialmente Gratuito" data-certifies="Sí (mayoría con suscripción)" data-country="Perú">
+                        <td><span class="platform-name-clickable">Crehana</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (mayoría con suscripción)</td>
+                        <td class="hide-on-mobile">Perú</td>
+                        <td><a href="https://www.crehana.com" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="platzi" data-cost="Parcialmente Gratuito" data-certifies="Sí (en su mayoría con suscripción)" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Platzi</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí (en su mayoría con suscripción)</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://platzi.com" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                     <tr data-platform-id="linkedin-learning" data-cost="Parcialmente Gratuito" data-certifies="Sí" data-country="Estados Unidos">
+                        <td><span class="platform-name-clickable">LinkedIn Learning</span></td>
+                        <td>Parcialmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Estados Unidos</td>
+                        <td><a href="https://www.linkedin.com/learning/" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                    <tr data-platform-id="ccb" data-cost="Totalmente Gratuito" data-certifies="Sí" data-country="Colombia">
+                        <td><span class="platform-name-clickable">Cámara de Comercio de Bogotá</span></td>
+                        <td>Totalmente Gratuito</td>
+                        <td>Sí</td>
+                        <td class="hide-on-mobile">Colombia</td>
+                        <td><a href="https://www.ccb.org.co/Formacion" target="_blank" rel="noopener noreferrer" class="visit-button">Visitar</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <footer class="text-center mt-10 md:mt-16 pt-8 border-t border-gray-300" id="acerca-de">
+            <p class="text-gray-600">
+                Recuerda verificar siempre los términos y condiciones de cada plataforma, ya que la disponibilidad de cursos gratuitos y las condiciones para certificación pueden cambiar.
+            </p>
+            <p class="text-sm text-gray-500 mt-2">© <span id="currentYear"></span> Edúcate.</p>
+            <p class="text-sm text-gray-500 mt-1">Recurso creado por estudiantes de ingeniería de sistemas de la Universidad Nacional Abierta y a Distancia UNAD</p>
+            <p class="text-sm text-gray-500 mt-1">¡Mucho éxito en tu aprendizaje!</p>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="platformModalOverlay">
+        <div class="modal-card">
+            <span class="modal-close-button" id="modalCloseButton">×</span>
+            <img src="" alt="Logo de Plataforma" class="modal-logo" id="modalLogo" onerror="this.src='https://placehold.co/80x80/CCCCCC/FFFFFF?text=Logo'">
+            <h2 class="modal-title" id="modalTitle">Nombre de Plataforma</h2>
+            <div class="modal-info">
+                <p><strong>Tipo de cursos:</strong> <span id="modalCourseTypes"></span></p>
+                <p><strong>Dirigido a:</strong> <span id="modalAudience"></span></p>
+                <p><strong>Proceso de ingreso:</strong> <span id="modalEnrollmentProcess"></span></p>
+                <p><strong>Certifica:</strong> <span id="modalCertifies"></span></p>
+                <p><strong>Perfil del estudiante:</strong> <span id="modalStudentProfile"></span></p>
+            </div>
+            <div class="modal-buttons">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn-site" id="modalSiteLink">Ir al sitio</a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn-guide" id="modalGuideLink">Guía en YouTube</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Script para establecer el año actual en el pie de página
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // --- Script para el filtrado de la tabla ---
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const tableRows = document.querySelectorAll('.platforms-table tbody tr');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remover clase 'active' de todos los botones del mismo tipo
+                const filterType = button.parentElement.querySelector('span').textContent.split(':')[0].trim(); // Obtiene el tipo de filtro (Costo, Certifica, País)
+                 const buttonsOfType = button.parentElement.querySelectorAll('.filter-button');
+                 buttonsOfType.forEach(btn => btn.classList.remove('active'));
+
+                // Añadir clase 'active' al botón clickeado
+                button.classList.add('active');
+
+                // Obtener los filtros activos
+                const activeFilters = {};
+                document.querySelectorAll('.filter-container .active:not([data-filter="all"])').forEach(activeButton => {
+                    const type = activeButton.parentElement.querySelector('span').textContent.split(':')[0].trim();
+                    if (!activeFilters[type]) {
+                        activeFilters[type] = [];
+                    }
+                    activeFilters[type].push(activeButton.getAttribute('data-filter'));
+                });
+
+
+                // Filtrar las filas de la tabla
+                tableRows.forEach(row => {
+                    let showRow = true;
+
+                    // Aplicar filtros de Costo
+                    if (activeFilters['Costo'] && activeFilters['Costo'].length > 0) {
+                        const rowCost = row.getAttribute('data-cost');
+                        if (!activeFilters['Costo'].includes(rowCost)) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Aplicar filtros de Certifica
+                    if (showRow && activeFilters['Certifica'] && activeFilters['Certifica'].length > 0) {
+                        const rowCertifies = row.getAttribute('data-certifies');
+                         // Check if any of the active 'Certifica' filters match the row's 'data-certifies'
+                        let certifiesMatch = false;
+                        for (const filterValue of activeFilters['Certifica']) {
+                            if (rowCertifies.includes(filterValue)) {
+                                certifiesMatch = true;
+                                break; // Found a match, no need to check other filters for this row
+                            }
+                        }
+                        if (!certifiesMatch) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Aplicar filtros de País
+                    if (showRow && activeFilters['País'] && activeFilters['País'].length > 0) {
+                        const rowCountry = row.getAttribute('data-country');
+                        if (!activeFilters['País'].includes(rowCountry)) {
+                            showRow = false;
+                        }
+                    }
+
+
+                    // Mostrar u ocultar la fila
+                    if (showRow) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+         // Inicializar filtros al cargar la página (mostrar todos por defecto)
+         document.addEventListener('DOMContentLoaded', () => {
+             document.querySelectorAll('.filter-button[data-filter="all"]').forEach(button => {
+                 button.classList.add('active');
+             });
+         });
+
+        // --- Script para el Modal de Detalles de Plataforma ---
+
+        // Datos detallados de las plataformas (usando IDs que coinciden con data-platform-id en las filas)
+        const platformDetails = {
+            sena: {
+                logo: 'https://placehold.co/80x80/2563EB/FFFFFF?text=SENA',
+                name: 'SENA Sofia Plus',
+                courseTypes: 'Formación técnica, tecnológica, complementaria y virtual en diversas áreas (industria, agro, servicios, etc.).',
+                audience: 'Ciudadanos colombianos y extranjeros con permiso de estudio, interesados en formación para el trabajo.',
+                enrollmentProcess: 'Registro en la plataforma Sofia Plus, selección del programa, inscripción según cronograma (para programas titulados) o disponibilidad (complementarios).',
+                certifies: 'Sí',
+                studentProfile: 'Personas con ganas de aprender un oficio o mejorar sus habilidades para el mercado laboral.',
+                siteLink: 'https://oferta.senasofiaplus.edu.co',
+                guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            mintic: {
+                 logo: 'https://placehold.co/80x80/00796B/FFFFFF?text=MinTIC',
+                 name: 'MinTIC',
+                 courseTypes: 'Habilidades digitales, programación, desarrollo de software, emprendimiento tecnológico, uso de TIC.',
+                 audience: 'Ciudadanos colombianos interesados en el sector de tecnologías de la información y comunicación.',
+                 enrollmentProcess: 'Registro en convocatorias específicas publicadas en su sitio web o en alianza con otras entidades.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas interesadas en adquirir o fortalecer competencias digitales y tecnológicas.',
+                 siteLink: 'https://www.mintic.gov.co/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            colombiaaprende: {
+                 logo: 'https://placehold.co/80x80/EF4444/FFFFFF?text=Col+Apr',
+                 name: 'Colombia Aprende',
+                 courseTypes: 'Recursos educativos digitales, contenidos curriculares, herramientas para el aprendizaje en diversas áreas del conocimiento.',
+                 audience: 'Estudiantes, docentes, padres de familia y comunidad educativa en general.',
+                 enrollmentProcess: 'Acceso libre a la mayoría de recursos. Algunos programas o cursos específicos pueden requerir registro.',
+                 certifies: 'No siempre',
+                 studentProfile: 'Cualquier persona buscando recursos educativos para complementar su aprendizaje o enseñanza.',
+                 siteLink: 'https://www.colombiaaprende.edu.co/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            biblored: {
+                 logo: 'https://placehold.co/80x80/4F46E5/FFFFFF?text=Biblored',
+                 name: 'Biblored (Bogotá)',
+                 courseTypes: 'Acceso a cursos en línea a través de plataformas aliadas (Coursera, LinkedIn Learning) en diversas áreas.',
+                 audience: 'Ciudadanos afiliados a la Red Distrital de Bibliotecas Públicas de Bogotá.',
+                 enrollmentProcess: 'Requiere afiliación previa a Biblored. El acceso a plataformas se gestiona a través de su portal digital.',
+                 certifies: 'No', // Biblored facilita el acceso, la certificación depende de la plataforma aliada (generalmente con costo)
+                 studentProfile: 'Residentes de Bogotá interesados en aprovechar los recursos educativos digitales de la red de bibliotecas.',
+                 siteLink: 'https://www.biblored.gov.co/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+             'carlos-slim': {
+                 logo: 'https://placehold.co/80x80/10B981/FFFFFF?text=Capacitate',
+                 name: 'Fundación Carlos Slim (Capacítate para el empleo)',
+                 courseTypes: 'Cursos técnicos y de oficios para el trabajo (construcción, servicios, tecnología, agropecuario, etc.).',
+                 audience: 'Público en general interesado en capacitarse para el empleo o el autoempleo.',
+                 enrollmentProcess: 'Registro gratuito en la plataforma Capacítate para el Empleo y acceso a los cursos.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas buscando adquirir habilidades prácticas y certificables para ingresar o mejorar en el mercado laboral.',
+                 siteLink: 'https://capacitateparaelempleo.org/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            coursera: {
+                 logo: 'https://placehold.co/80x80/4A5568/FFFFFF?text=Coursera',
+                 name: 'Coursera',
+                 courseTypes: 'Cursos, especializaciones, certificados profesionales y grados de universidades y empresas líderes a nivel mundial, en diversas áreas.',
+                 audience: 'Estudiantes, profesionales y cualquier persona interesada en educación de alto nivel.',
+                 enrollmentProcess: 'Registro en la plataforma. Muchos cursos permiten "Auditar" gratis (acceso a materiales). La certificación y acceso completo requieren pago.',
+                 certifies: 'Sí (con costo)',
+                 studentProfile: 'Personas buscando profundizar conocimientos académicos o profesionales, a menudo con interés en obtener certificados reconocidos.',
+                 siteLink: 'https://www.coursera.org/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+             edx: {
+                 logo: 'https://placehold.co/80x80/00796B/FFFFFF?text=edX',
+                 name: 'edX',
+                 courseTypes: 'Cursos, programas de certificado y MicroMasters de universidades reconocidas globalmente, en diversas disciplinas.',
+                 audience: 'Estudiantes y aprendices de todo el mundo interesados en educación de calidad.',
+                 enrollmentProcess: 'Registro en la plataforma. La mayoría de cursos se pueden "Auditar" gratis. Los certificados verificados requieren pago.',
+                 certifies: 'Sí (con costo)',
+                 studentProfile: 'Personas buscando acceso a cursos universitarios en línea, a menudo con un enfoque académico o profesional.',
+                 siteLink: 'https://www.edx.org/es',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            'google-activate': {
+                 logo: 'https://placehold.co/80x80/EA4335/FFFFFF?text=Google',
+                 name: 'Google Actívate / Crece con Google',
+                 courseTypes: 'Marketing digital, desarrollo profesional, datos, IA, comercio electrónico, productividad.',
+                 audience: 'Emprendedores, pequeñas empresas, estudiantes y cualquier persona interesada en habilidades digitales.',
+                 enrollmentProcess: 'Registro gratuito con cuenta de Google.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas buscando adquirir habilidades prácticas y certificables en el ámbito digital para mejorar su perfil profesional o negocio.',
+                 siteLink: 'https://grow.google/intl/es/courses-and-tools/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+             crehana: {
+                 logo: 'https://placehold.co/80x80/F5A623/FFFFFF?text=Crehana',
+                 name: 'Crehana',
+                 courseTypes: 'Cursos en diseño, animación, ilustración, marketing, negocios, web, fotografía, etc.',
+                 audience: 'Creativos, profesionales y estudiantes interesados en habilidades digitales y creativas.',
+                 enrollmentProcess: 'Registro en la plataforma. Ofrecen algunos cursos gratuitos y acceso completo con suscripción.',
+                 certifies: 'Sí (mayoría con suscripción)',
+                 studentProfile: 'Personas buscando desarrollar habilidades creativas y digitales para su carrera profesional.',
+                 siteLink: 'https://www.crehana.com/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            platzi: {
+                 logo: 'https://placehold.co/80x80/9CCC65/000000?text=Platzi',
+                 name: 'Platzi',
+                 courseTypes: 'Tecnología, diseño, marketing, negocios, habilidades blandas, inglés.',
+                 audience: 'Personas interesadas en tecnología y crecimiento profesional continuo.',
+                 enrollmentProcess: 'Registro en la plataforma. Ofrecen algunos cursos gratuitos y acceso a toda la escuela con suscripción.',
+                 certifies: 'Sí (en su mayoría con suscripción)',
+                 studentProfile: 'Personas buscando aprender las últimas tendencias en tecnología y negocios para acelerar su carrera.',
+                 siteLink: 'https://platzi.com/', // Enlace a la página principal de Platzi
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+             'linkedin-learning': {
+                 logo: 'https://placehold.co/80x80/0077B5/FFFFFF?text=LinkedIn',
+                 name: 'LinkedIn Learning',
+                 courseTypes: 'Negocios, tecnología, creatividad (software, habilidades de liderazgo, etc.).',
+                 audience: 'Profesionales buscando mejorar sus habilidades laborales y de carrera.',
+                 enrollmentProcess: 'Requiere suscripción a LinkedIn Premium o acceso a través de una institución (como Biblored). Ofrecen un mes de prueba gratis.',
+                 certifies: 'Sí',
+                 studentProfile: 'Profesionales activos o buscando empleo que desean adquirir nuevas habilidades relevantes para su campo.',
+                 siteLink: 'https://www.linkedin.com/learning/',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            },
+            ccb: {
+                 logo: 'https://placehold.co/80x80/F5A623/FFFFFF?text=CCB',
+                 name: 'Cámara de Comercio de Bogotá',
+                 courseTypes: 'Emprendimiento, formalización empresarial, transformación digital, finanzas, marketing, gestión.',
+                 audience: 'Emprendedores, empresarios y público en general interesado en crear o fortalecer negocios en Bogotá y Cundinamarca.',
+                 enrollmentProcess: 'Registro en su Campus Virtual o inscripción a programas específicos. Muchos cursos son gratuitos.',
+                 certifies: 'Sí',
+                 studentProfile: 'Personas interesadas en el mundo empresarial, buscando herramientas y conocimientos para emprender o mejorar su negocio.',
+                 siteLink: 'https://www.ccb.org.co/Formacion',
+                 guideLink: 'youtube.com' // Reemplazar con enlace real si existe
+            }
+            // TODO: Añadir más plataformas y sus detalles aquí
+        };
+
+
+        const platformsTableBody = document.getElementById('platformsTableBody');
+        const platformNameClickables = platformsTableBody.querySelectorAll('.platform-name-clickable');
+        const modalOverlay = document.getElementById('platformModalOverlay');
+        const modalCard = modalOverlay.querySelector('.modal-card');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+
+        const modalLogo = document.getElementById('modalLogo');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCourseTypes = document.getElementById('modalCourseTypes');
+        const modalAudience = document.getElementById('modalAudience');
+        const modalEnrollmentProcess = document.getElementById('modalEnrollmentProcess');
+        const modalCertifies = document.getElementById('modalCertifies');
+        const modalStudentProfile = document.getElementById('modalStudentProfile');
+        const modalSiteLink = document.getElementById('modalSiteLink');
+        const modalGuideLink = document.getElementById('modalGuideLink');
+
+
+        // Mostrar modal al hacer clic en el nombre de la plataforma
+        platformNameClickables.forEach(nameElement => {
+            nameElement.addEventListener('click', () => {
+                const row = nameElement.closest('tr');
+                const platformId = row.getAttribute('data-platform-id');
+                const details = platformDetails[platformId];
+
+                if (details) {
+                    // Llenar el modal con los detalles
+                    modalLogo.src = details.logo;
+                    modalTitle.textContent = details.name;
+                    modalCourseTypes.textContent = details.courseTypes;
+                    modalAudience.textContent = details.audience;
+                    modalEnrollmentProcess.textContent = details.enrollmentProcess;
+                    modalCertifies.textContent = details.certifies;
+                    modalStudentProfile.textContent = details.studentProfile;
+                    modalSiteLink.href = details.siteLink;
+                    modalGuideLink.href = details.guideLink;
+
+                    // Mostrar el modal
+                    modalOverlay.style.display = 'flex';
+                }
+            });
+        });
+
+        // Ocultar modal al hacer clic en la 'x' o fuera del modal
+        modalCloseButton.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
+
+         modalOverlay.addEventListener('click', (event) => {
+             // Si el clic fue directamente en el overlay (no en la tarjeta)
+             if (event.target === modalOverlay) {
+                 modalOverlay.style.display = 'none';
+             }
+         });
+
+         // Evitar que el clic dentro de la tarjeta cierre el modal
+         modalCard.addEventListener('click', (event) => {
+             event.stopPropagation();
+         });
+
+
+    </script>
+</body>
+</html>
